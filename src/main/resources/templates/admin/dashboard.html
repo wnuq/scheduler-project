@@ -1,63 +1,100 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: main(~{::content}, ~{::title}, ~{::scripts})}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grafik Szkoły Nauki Jazdy - Panel Admina</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Panel Admina | DriveMaster</title>
 </head>
 <body>
 
-<div class="container py-5">
-    <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
-        <h1 class="h3">Grafik Szkoły Nauki Jazdy - Panel Administratora</h1>
-        <nav>
-            <a href="/admin/schedule" class="btn btn-primary me-2">Kalendarz</a>
-            <a href="/logout" class="btn btn-outline-danger">Wyloguj</a>
-        </nav>
-    </header>
-
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-    <div class="card shadow-sm">
-        <div class="card-header bg-white">
-            <h5 class="mb-0">Lista Kursantów</h5>
+<div th:fragment="content">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="fw-bold"><i class="bi bi-people-fill me-2 text-primary"></i>Zarządzanie Kursantami</h2>
+            <p class="text-muted">Przeglądaj listę kursantów i zarządzaj ich godzinami.</p>
         </div>
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead class="table-light">
-                <tr>
-                    <th>Imię i Nazwisko</th>
-                    <th>Email</th>
-                    <th>Pozostało godzin</th>
-                    <th>Wszystkie rezerwacje</th>
-                    <th>Akcje</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="student : ${students}">
-                    <td th:text="${student.firstName + ' ' + student.lastName}"></td>
-                    <td th:text="${student.email}"></td>
-                    <td>
-                        <span class="badge" th:classappend="${student.remainingHours > 5 ? 'bg-success' : 'bg-warning'}"
-                              th:text="${student.remainingHours}"></span>
-                    </td>
-                    <td th:text="${student.totalBookings}"></td>
-                    <td>
-                        <form th:action="@{/admin/student/update-hours}" method="post" class="d-flex align-items-center">
-                            <input type="hidden" name="studentId" th:value="${student.id}">
-                            <input type="number" name="hours" th:value="${student.remainingHours}" class="form-control form-control-sm me-2" style="width: 70px;">
-                            <button type="submit" class="btn btn-sm btn-outline-primary">Ustaw</button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="col-md-4 text-md-end">
+            <a href="/admin/schedule" class="btn btn-primary shadow-sm">
+                <i class="bi bi-calendar-event me-2"></i>Kalendarz Zajęć
+            </a>
+        </div>
+    </div>
+
+    <!-- Alerty -->
+    <div th:if="${success}" class="alert alert-success border-0 shadow-sm alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger border-0 shadow-sm alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom py-3">
+            <h5 class="mb-0 fw-bold">Lista Aktywnych Kursantów</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                    <tr>
+                        <th class="px-4 py-3">Kursant</th>
+                        <th>Email</th>
+                        <th>Status Godzin</th>
+                        <th>Łącznie Rezerwacji</th>
+                        <th class="text-end px-4">Akcje</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="student : ${students}">
+                        <td class="px-4">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm me-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div class="fw-semibold text-dark" th:text="${student.firstName + ' ' + student.lastName}"></div>
+                            </div>
+                        </td>
+                        <td class="text-muted" th:text="${student.email}"></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="badge me-2" th:classappend="${student.remainingHours > 10 ? 'bg-success-subtle text-success' : (student.remainingHours > 3 ? 'bg-warning-subtle text-warning' : 'bg-danger-subtle text-danger')}"
+                                      th:text="${student.remainingHours + ' h'}"></span>
+                                <div class="progress flex-grow-1" style="height: 6px; min-width: 60px; max-width: 100px;">
+                                    <div class="progress-bar" role="progressbar" 
+                                         th:style="'width: ' + (${student.remainingHours} * 100 / 30) + '%'" 
+                                         th:classappend="${student.remainingHours > 10 ? 'bg-success' : (student.remainingHours > 3 ? 'bg-warning' : 'bg-danger')}"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-3">
+                            <span class="text-dark fw-medium" th:text="${student.totalBookings}"></span>
+                        </td>
+                        <td class="text-end px-4">
+                            <form th:action="@{/admin/student/update-hours}" method="post" class="d-inline-flex">
+                                <input type="hidden" name="studentId" th:value="${student.id}">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" name="hours" th:value="${student.remainingHours}" class="form-control" style="width: 60px;">
+                                    <button type="submit" class="btn btn-outline-primary">
+                                        <i class="bi bi-save"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(students)}">
+                        <td colspan="5" class="text-center py-5 text-muted"> Brak kursantów w systemie. </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<th:block th:fragment="scripts"></th:block>
+
 </body>
 </html>

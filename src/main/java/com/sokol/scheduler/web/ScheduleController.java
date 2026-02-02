@@ -54,15 +54,9 @@ public class ScheduleController {
         System.out.println("DEBUG: User Authorities: " + principal.getAuthorities());
         
         return userRepository.findByClerkId(clerkId)
-            .map(user -> {
-                System.out.println("DEBUG: DB User Role: " + user.getRole());
-                model.addAttribute("remainingHours", user.getRemainingHours());
-                model.addAttribute("user", user);
-                return "schedule";
-            })
+            .map(user -> "schedule")
             .orElseGet(() -> {
                 System.out.println("ERROR: User not found in DB for Clerk ID: " + clerkId);
-                // In a real app, we might force a re-sync or logout
                 return "redirect:/logout";
             });
     }

@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-color: #64748b;
+    --bg-light: #f8fafc;
+    --text-main: #1e293b;
+    --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-main);
+}
+
+.navbar {
+    background-color: white !important;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 1.25rem;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+
+/* FullCalendar Customization */
+#calendar {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.fc .fc-button-primary {
+    background-color: white;
+    border-color: #e2e8f0;
+    color: var(--text-main);
+    text-transform: capitalize;
+}
+
+.fc .fc-button-primary:not(:disabled):hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: var(--text-main);
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.fc-v-event {
+    border: none;
+    padding: 2px 4px;
+}
+
+.fc-event-main {
+    font-weight: 500;
+}
+
+/* Custom Table Styles */
+.table {
+    --bs-table-hover-bg: #f1f5f9;
+}
+
+.table th {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--secondary-color);
+    border-top: none;
+}
