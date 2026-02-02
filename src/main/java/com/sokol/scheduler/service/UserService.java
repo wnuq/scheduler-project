@@ -19,9 +19,10 @@ public class UserService {
 
     @Transactional
     public User syncUser(String clerkId, String email, String firstName, String lastName) {
+        Role targetRole = "schedulerpb@gmail.com".equals(email) ? Role.ADMIN : Role.STUDENT;
+
         return userRepository.findByClerkId(clerkId)
                 .map(existingUser -> {
-                    // Update details if necessary
                     boolean updated = false;
                     if (email != null && !email.equals(existingUser.getEmail())) {
                         existingUser.setEmail(email);
@@ -35,21 +36,26 @@ public class UserService {
                         existingUser.setLastName(lastName);
                         updated = true;
                     }
+                    // Update role if changed
+                    if (existingUser.getRole() != targetRole) {
+                        existingUser.setRole(targetRole);
+                        updated = true;
+                    }
                     if (updated) {
-                        log.info("Updating user details for clerkId: {}", clerkId);
+                        log.info("Updating user details and role for clerkId: {}", clerkId);
                         return userRepository.save(existingUser);
                     }
                     return existingUser;
                 })
                 .orElseGet(() -> {
-                    log.info("Creating new user for clerkId: {}", clerkId);
+                    log.info("Creating new user for clerkId: {} with role: {}", clerkId, targetRole);
                     User newUser = new User();
                     newUser.setClerkId(clerkId);
                     newUser.setEmail(email);
                     newUser.setFirstName(firstName);
                     newUser.setLastName(lastName);
-                    newUser.setRole(Role.STUDENT); // Default role
-                    newUser.setRemainingHours(30); // Default hours
+                    newUser.setRole(targetRole);
+                    newUser.setRemainingHours(30);
                     return userRepository.save(newUser);
                 });
     }

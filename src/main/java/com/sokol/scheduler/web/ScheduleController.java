@@ -41,9 +41,12 @@ public class ScheduleController {
         
         String clerkId = principal.getAttribute("sub");
         System.out.println("DEBUG: Logged in user Clerk ID: " + clerkId);
+        System.out.println("DEBUG: User Attributes: " + principal.getAttributes());
+        System.out.println("DEBUG: User Authorities: " + principal.getAuthorities());
         
         return userRepository.findByClerkId(clerkId)
             .map(user -> {
+                System.out.println("DEBUG: DB User Role: " + user.getRole());
                 model.addAttribute("remainingHours", user.getRemainingHours());
                 model.addAttribute("user", user);
                 return "schedule";

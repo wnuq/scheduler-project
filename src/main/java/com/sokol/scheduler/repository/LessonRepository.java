@@ -12,4 +12,6 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
     List<Lesson> findAllByStartTimeBetween(LocalDateTime start, LocalDateTime end);
 
     int countByStudentAndStartTimeBetween(com.sokol.scheduler.domain.User student, LocalDateTime start, LocalDateTime end);
+
+    int countByStudent(com.sokol.scheduler.domain.User student);
 }
