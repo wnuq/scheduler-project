@@ -31,14 +31,23 @@ public class ScheduleController {
     private final UserRepository userRepository;
 
     @GetMapping("/")
-    public String index() {
+    public String index(@AuthenticationPrincipal OAuth2User principal) {
+        if (principal != null && principal.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return "redirect:/admin/schedule";
+        }
         return "redirect:/schedule";
     }
 
     @GetMapping("/schedule")
     public String viewSchedule(@AuthenticationPrincipal OAuth2User principal, Model model) {
         if (principal == null) return "redirect:/";
-        
+
+        if (principal.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return "redirect:/admin/schedule";
+        }
+
         String clerkId = principal.getAttribute("sub");
         System.out.println("DEBUG: Logged in user Clerk ID: " + clerkId);
         System.out.println("DEBUG: User Attributes: " + principal.getAttributes());

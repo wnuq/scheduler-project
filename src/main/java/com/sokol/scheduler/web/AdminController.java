@@ -28,6 +28,11 @@ public class AdminController {
     private final AdminService adminService;
     private final UserRepository userRepository;
 
+    @GetMapping("")
+    public String index() {
+        return "redirect:/admin/schedule";
+    }
+
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("students", adminService.getAllStudents());
