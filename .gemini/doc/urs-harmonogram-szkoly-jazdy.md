@@ -1,4 +1,13 @@
-# Specyfikacja Wymagań Użytkownika (URS) - System Harmonogramu Szkoły Jazdy
+<div style="text-align: center; padding: 100px 0;">
+    <h1 style="font-size: 3em;">Specyfikacja Wymagań Użytkownika (URS)</h1>
+    <h2 style="font-size: 2em; color: #555;">System Harmonogramu Szkoły Jazdy</h2>
+    <br><br><br>
+    <p style="font-size: 1.2em;">Projekt: <strong>Scheduler</strong></p>
+    <p style="font-size: 1.2em;">Data: 3 lutego 2026 r.</p>
+    <p style="font-size: 1.2em;">Status: Dokumentacja Techniczna</p>
+</div>
+
+<div style="page-break-after: always;"></div>
 
 ## 1. Wstęp
 
@@ -27,7 +36,7 @@ Niniejsza platforma obejmuje swoim zakresem moduł bezpiecznego uwierzytelniania
 *   **BR-04 (Wyłączność Slota):** Dany termin w kalendarzu może posiadać tylko jeden z trzech stanów: `DOSTĘPNY`, `ZAREZERWOWANY` lub `ZABLOKOWANY`, przy czym status rezerwacji przez jednego kursanta automatycznie czyni termin niewidocznym dla innych w kontekście możliwości zapisu.
 *   **BR-05 (Prywatność Danych):** System chroni tożsamość użytkowników, co oznacza, że kursant widzi jedynie informację o niedostępności danego terminu (kolor szary), nie mając wglądu w to, kto konkretnie dokonał rezerwacji w danym czasie.
 
----
+<div style="page-break-after: always;"></div>
 
 ## 4. Wymagania Funkcjonalne
 
@@ -48,91 +57,110 @@ Niniejsza platforma obejmuje swoim zakresem moduł bezpiecznego uwierzytelniania
 *   **FR-07:** Administrator ma prawo do jednostronnego blokowania dowolnego wolnego terminu w kalendarzu, co jest niezbędne do wyłączenia godzin z użytku bez przypisywania ich do konkretnego ucznia.
 *   **FR-08:** Panel administracyjny musi zawierać listę wszystkich zarejestrowanych kursantów wraz z funkcjonalnością edycji ich salda godzinowego oraz podglądu szczegółowej historii ich rezerwacji.
 
----
+<div style="page-break-after: always;"></div>
 
 ## 5. Scenariusze Użytkowania (Notacja Gherkin)
 
+<div style="page-break-inside: avoid; margin-bottom: 30px;">
+
 ### 5.1 Rezerwacja lekcji przez kursanta
 ```gherkin
-Właściwość: Rezerwacja terminu przez kursanta
-  Jako zalogowany kursant
-  Chcę dokonać rezerwacji wolnej godziny w kalendarzu
-  Aby móc realizować swój program szkolenia kierowców
+Feature: Rezerwacja terminu przez kursanta
+  As a zalogowany kursant
+  I want to dokonać rezerwacji wolnej godziny w kalendarzu
+  So that mogę realizować swój program szkolenia kierowców
 
-  Scenariusz: Pomyślna rezerwacja dostępnego terminu
-    Zakładając, że jestem zalogowany jako kursant "Jan Kowalski"
-    I posiadam aktualne saldo "15" pozostałych godzin
-    I nie posiadam żadnej innej rezerwacji w dniu "2026-03-10"
-    Gdy wybiorę dostępny termin "10:00" w dniu "2026-03-10" i potwierdzę chęć zapisu
-    Wtedy system powinien zarejestrować moją rezerwację w bazie danych
-    I moje saldo godzin powinno zostać pomniejszone do "14"
-    Oraz wybrany slot w kalendarzu powinien zmienić kolor na niebieski
+  Scenario: Pomyślna rezerwacja dostępnego terminu
+    Given jestem zalogowany jako kursant "Jan Kowalski"
+    And posiadam aktualne saldo "15" pozostałych godzin
+    And nie posiadam żadnej innej rezerwacji w dniu "2026-03-10"
+    When wybiorę dostępny termin "10:00" w dniu "2026-03-10" i potwierdzę chęć zapisu
+    Then system powinien zarejestrować moją rezerwację w bazie danych
+    And moje saldo godzin powinno zostać pomniejszone do "14"
+    And wybrany slot w kalendarzu powinien zmienić kolor na niebieski
 ```
+</div>
+
+<div style="page-break-inside: avoid; margin-bottom: 30px;">
 
 ### 5.2 Próba naruszenia limitu dziennego
 ```gherkin
-Właściwość: Walidacja limitu jednej lekcji dziennie
-  Jako kursant systemu
-  Chcę spróbować zarezerwować drugą godzinę w tym samym dniu
-  Aby system zablokował tę akcję zgodnie z regulaminem szkoły
+Feature: Walidacja limitu jednej lekcji dziennie
+  As a kursant systemu
+  I want to spróbować zarezerwować drugą godzinę w tym samym dniu
+  So that system zablokuje tę akcję zgodnie z regulaminem szkoły
 
-  Scenariusz: Odmowa rezerwacji drugiego terminu tego samego dnia
-    Zakładając, że posiadam już potwierdzoną rezerwację na godzinę "08:00" w dniu "2026-03-12"
-    Gdy spróbuję kliknąć i zarezerwować kolejny wolny termin o godzinie "15:00" w tym samym dniu
-    Wtedy system powinien wyświetlić komunikat o błędzie: "Przekroczono dzienny limit rezerwacji (max 1h/dzień)"
-    I moja próba zapisu powinna zostać odrzucona
-    Oraz moje saldo godzin nie powinno ulec zmianie
+  Scenario: Odmowa rezerwacji drugiego terminu tego samego dnia
+    Given posiadam już potwierdzoną rezerwację na godzinę "08:00" w dniu "2026-03-12"
+    When spróbuję kliknąć i zarezerwować kolejny wolny termin o godzinie "15:00" w tym samym dniu
+    Then system powinien wyświetlić komunikat o błędzie: "Przekroczono dzienny limit rezerwacji (max 1h/dzień)"
+    And moja próba zapisu powinna zostać odrzucona
+    And moje saldo godzin nie powinno ulec zmianie
 ```
+</div>
+
+<div style="page-break-after: always;"></div>
+
+<div style="page-break-inside: avoid; margin-bottom: 30px;">
 
 ### 5.3 Uwierzytelnianie i inicjalizacja profilu (Clerk)
 ```gherkin
-Właściwość: Autoryzacja użytkownika via Clerk
-  Jako nowy użytkownik systemu
-  Chcę zalogować się za pomocą zewnętrznego dostawcy tożsamości
-  Aby uzyskać dostęp do funkcji rezerwacji
+Feature: Autoryzacja użytkownika via Clerk
+  As a nowy użytkownik systemu
+  I want to zalogować się za pomocą zewnętrznego dostawcy tożsamości
+  So that uzyskam dostęp do funkcji rezerwacji
 
-  Scenariusz: Pierwsze logowanie nowego kursanta
-    Zakładając, że nie posiadam jeszcze konta w lokalnej bazie danych systemu
-    Gdy pomyślnie uwierzytelnię się w usłudze Clerk
-    Wtedy system powinien automatycznie utworzyć mój profil w lokalnej tabeli "app_user"
-    I przypisać mi domyślną rolę "STUDENT"
-    Oraz ustawić moje początkowe saldo na "30" godzin
-    I przekierować mnie do głównego widoku harmonogramu lekcji
+  Scenario: Pierwsze logowanie nowego kursanta
+    Given nie posiadam jeszcze konta w lokalnej bazie danych systemu
+    When pomyślnie uwierzytelnię się w usłudze Clerk
+    Then system powinien automatycznie utworzyć mój profil w lokalnej tabeli "app_user"
+    And przypisać mi domyślną rolę "STUDENT"
+    And ustawić moje początkowe saldo na "30" godzin
+    And przekierować mnie do głównego widoku harmonogramu lekcji
 ```
+</div>
+
+<div style="page-break-inside: avoid; margin-bottom: 30px;">
 
 ### 5.4 Panel Administracyjny - Pulpit Zarządzania Kursantami (Dashboard)
 ```gherkin
-Właściwość: Administracyjne zarządzanie listą kursantów
-  Jako administrator systemu
-  Chcę mieć pełny wgląd w listę uczniów oraz możliwość edycji ich parametrów
-  Aby sprawnie zarządzać procesem szkolenia i rozliczeniami
+Feature: Administracyjne zarządzanie listą kursantów
+  As a administrator systemu
+  I want to mieć pełny wgląd w listę uczniów oraz możliwość edycji ich parametrów
+  So that mogę sprawnie zarządzać procesem szkolenia i rozliczeniami
 
-  Scenariusz: Przeglądanie listy i aktualizacja salda godzin kursanta
-    Zakładając, że jestem zalogowany jako administrator
-    Gdy wejdę do panelu "Dashboard" (Pulpit)
-    Wtedy powinienem zobaczyć tabelę z listą wszystkich zarejestrowanych kursantów, ich adresami e-mail oraz aktualnym saldem godzin
-    Gdy wybiorę kursanta "Jan Kowalski" i zmienię jego saldo z "10" na "15" godzin
-    Wtedy system powinien natychmiast zaktualizować te dane w bazie
-    Oraz wyświetlić potwierdzenie: "Saldo kursanta zostało pomyślnie zaktualizowane"
+  Scenario: Przeglądanie listy i aktualizacja salda godzin kursanta
+    Given jestem zalogowany jako administrator
+    When wejdę do panelu "Dashboard" (Pulpit)
+    Then powinienem zobaczyć tabelę z listą wszystkich zarejestrowanych kursantów, ich adresami e-mail oraz aktualnym saldem godzin
+    When wybiorę kursanta "Jan Kowalski" i zmienię jego saldo z "10" na "15" godzin
+    Then system powinien natychmiast zaktualizować te dane w bazie
+    And wyświetlić potwierdzenie: "Saldo kursanta zostało pomyślnie zaktualizowane"
 ```
+</div>
+
+<div style="page-break-after: always;"></div>
+
+<div style="page-break-inside: avoid; margin-bottom: 30px;">
 
 ### 5.5 Panel Administracyjny - Pełne Zarządzanie Grafikiem (Schedule)
 ```gherkin
-Właściwość: Administracyjny nadzór nad harmonogramem
-  Jako administrator systemu
-  Chcę widzieć szczegółowy grafik wszystkich lekcji oraz mieć możliwość zarządzania dostępnością
-  Aby koordynować pracę szkoły i blokować terminy w razie potrzeby
+Feature: Administracyjny nadzór nad harmonogramem
+  As a administrator systemu
+  I want to widzieć szczegółowy grafik wszystkich lekcji oraz mieć możliwość zarządzania dostępnością
+  So that mogę koordynować pracę szkoły i blokować terminy w razie potrzeby
 
-  Scenariusz: Podgląd rezerwacji i blokowanie terminów
-    Zakładając, że jestem zalogowany jako administrator
-    Gdy otworzę widok "Schedule" (Grafik) w panelu administratora
-    Wtedy powinienem widzieć kalendarz, w którym sloty zarezerwowane przez kursantów wyświetlają ich imiona i nazwiska
-    Gdy zauważę wolny termin o godzinie "14:00" w przyszły wtorek i wybiorę opcję "Zablokuj"
-    Wtedy status tego terminu powinien zmienić się na "ZABLOKOWANY"
-    Oraz żaden kursant nie będzie mógł dokonać rezerwacji w tym czasie, widząc ten slot jako niedostępny (szary)
+  Scenario: Podgląd rezerwacji i blokowanie terminów
+    Given jestem zalogowany jako administrator
+    When otworzę widok "Schedule" (Grafik) w panelu administratora
+    Then powinienem widzieć kalendarz, w którym sloty zarezerwowane przez kursantów wyświetlają ich imiona i nazwiska
+    When zauważę wolny termin o godzinie "14:00" w przyszły wtorek i wybiorę opcję "Zablokuj"
+    Then status tego terminu powinien zmienić się na "ZABLOKOWANY"
+    And żaden kursant nie będzie mógł dokonać rezerwacji w tym czasie, widząc ten slot jako niedostępny (szary)
 ```
+</div>
 
----
+<div style="page-break-after: always;"></div>
 
 ## 6. Model Danych (Struktura Techniczna)
 
